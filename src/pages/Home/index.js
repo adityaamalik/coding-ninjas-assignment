@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import * as S from "./styles.js";
 import axios from "axios";
 import EventCard from "../../components/EventCard/index.js";
-import { Row, Divider, Col } from "antd";
+import { Row } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import TagFilterButton from "../../components/TagFilterButton";
 import TagFilterModal from "../../components/TagFilterModal";
+import Heading from "../../components/Heading";
+import MainEventSelection from "../../components/MainEventSelection";
+import TimelineSelection from "../../components/TimelineSelection";
+import Pagination from "../../components/Pagination";
 
 const Home = () => {
   const [eventCategory, setEventCategory] = useState("ALL_EVENTS");
@@ -106,11 +110,14 @@ const Home = () => {
 
   return (
     <S.Container>
+      {/* tag filter button component */}
       <TagFilterButton
         openTagFilterModal={openTagFilterModal}
         closeTagFilterModal={closeTagFilterModal}
         tagFilterModalVisible={tagFilterModalVisible}
       />
+
+      {/* tag filter modal component */}
       <TagFilterModal
         allTags={allTags}
         selectedTags={tagList}
@@ -120,111 +127,39 @@ const Home = () => {
         addTags={addTags}
       />
 
-      <S.HeadingContainer>
-        <Row align="middle">
-          <Col style={{ marginRight: "30px" }}>
-            <img src="logo.svg" height="50px" alt="coding ninjas logo" />
-          </Col>
-          <Col>
-            <S.Heading>EVENTS & NEWS</S.Heading>
-            <S.SubHeading>LEARN, COMPETE & GROW </S.SubHeading>
-          </Col>
-        </Row>
-      </S.HeadingContainer>
+      {/* heading component */}
+      <Heading />
 
       <S.EventsContainer>
-        <Divider orientation="left">Event Categories</Divider>
-        <S.EventSelection>
-          <S.CustomButton
-            onClick={() => {
-              setEventCategory("ALL_EVENTS");
-              setCurrentPage(1);
-            }}
-            selected={eventCategory === "ALL_EVENTS"}
-          >
-            All Events
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventCategory("WEBINAR");
-              setCurrentPage(1);
-            }}
-            selected={eventCategory === "WEBINAR"}
-          >
-            Webinars
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventCategory("CODING_EVENT");
-              setCurrentPage(1);
-            }}
-            selected={eventCategory === "CODING_EVENT"}
-          >
-            Coding Events
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventCategory("BOOTCAMP_EVENT");
-              setCurrentPage(1);
-            }}
-            selected={eventCategory === "BOOTCAMP_EVENT"}
-          >
-            Bootcamp Events
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventCategory("WORKSHOP");
-              setCurrentPage(1);
-            }}
-            selected={eventCategory === "WORKSHOP"}
-          >
-            Workshop
-          </S.CustomButton>
-        </S.EventSelection>
+        {/* main event category selection filter component */}
+        <MainEventSelection
+          setEventCategory={setEventCategory}
+          setCurrentPage={setCurrentPage}
+          eventCategory={eventCategory}
+        />
 
-        <Divider orientation="left">Timeline</Divider>
-        <S.EventSelection>
-          <S.CustomButton
-            onClick={() => {
-              setEventSubCategory("All Time Favorites");
-              setCurrentPage(1);
-            }}
-            selected={eventSubCategory === "All Time Favorites"}
-          >
-            All Time Favourites
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventSubCategory("Upcoming");
-              setCurrentPage(1);
-            }}
-            selected={eventSubCategory === "Upcoming"}
-          >
-            Upcoming
-          </S.CustomButton>
-          <S.CustomButton
-            onClick={() => {
-              setEventSubCategory("Archived");
-              setCurrentPage(1);
-            }}
-            selected={eventSubCategory === "Archived"}
-          >
-            Archived
-          </S.CustomButton>
-        </S.EventSelection>
+        {/* timeline selection component */}
+        <TimelineSelection
+          setEventSubCategory={setEventSubCategory}
+          setCurrentPage={setCurrentPage}
+          eventSubCategory={eventSubCategory}
+        />
 
+        {/* loading events component */}
         {loading ? (
           <S.NoEvents>
             <LoadingOutlined style={{ fontSize: "30px" }} />
           </S.NoEvents>
         ) : (
           <>
+            {/* if no event is found */}
             {events.length === 0 ? (
               <S.NoEvents>
                 <h1>No Events</h1>
               </S.NoEvents>
             ) : (
               <Row>
+                {/* mapping event card component */}
                 {currentEvents.map((event) => {
                   return (
                     <S.EventCol key={event.id} lg={8} md={12} sm={24} xs={24}>
@@ -237,22 +172,12 @@ const Home = () => {
           </>
         )}
 
-        <Divider orientation="center">
-          Showing {currentPage} of {totalPages.length}
-        </Divider>
-        <S.PaginationContainer>
-          {totalPages.map((page) => {
-            return (
-              <S.PaginationButton
-                selected={currentPage === page}
-                onClick={() => handlePageChange(page)}
-                key={page}
-              >
-                {page}
-              </S.PaginationButton>
-            );
-          })}
-        </S.PaginationContainer>
+        {/* pagination component */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
       </S.EventsContainer>
     </S.Container>
   );
