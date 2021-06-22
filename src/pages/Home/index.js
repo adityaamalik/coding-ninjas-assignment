@@ -65,7 +65,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
     axios
       .get(`event_tags`)
       .then((response) => {
@@ -74,7 +73,10 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
+  }, []);
 
+  useEffect(() => {
+    setLoading(true);
     const stringTagList = tagList.join();
     axios
       .get(
